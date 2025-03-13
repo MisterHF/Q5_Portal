@@ -45,7 +45,7 @@ void UACPortalManager::UnregisterPortal(AAPortal* _portalToRemove)
 {
 }
 
-void UACPortalManager::DestroyPortail(TArray<AAPortal*>)
+void UACPortalManager::DestroyPortail(TArray<AAPortal*> _portalArray)
 {
 }
 

@@ -35,5 +35,5 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void UnregisterPortal(AAPortal* _portalToRemove);
 	UFUNCTION(BlueprintCallable)
-	void DestroyPortail(TArray<AAPortal*>);
+	void DestroyPortail(TArray<AAPortal*> _portalArray);
 };
