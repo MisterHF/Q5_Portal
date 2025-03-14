@@ -15,6 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	AAPortal();
 
+	
+
 //protected:
 //	// Called when the game starts or when spawned
 //	virtual void BeginPlay() override;
@@ -31,12 +33,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Portal")
 	FVector portalNormal;
 
+
+	//UFUNCTION(BlueprintCallable)
+	//AAPortal* CreatePortal(FVector _pos, TSubclassOf<AAPortal> _portalType);
+
 protected:
 	//Function
-	UFUNCTION(BlueprintCallable)
-	void CreatePortal(FVector _pos, TSubclassOf<AAPortal> _portalType);
-	UFUNCTION(BlueprintCallable)
-	void DestroyPortal();
+	
 	UFUNCTION(BlueprintCallable)
 	void TeleportActor(AActor* _actor, AAPortal* _portal);
 };

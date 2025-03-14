@@ -39,13 +39,14 @@ AAPortal* UACPortalManager::GetConnectedPortalFrom(AAPortal* _portal)
 
 void UACPortalManager::RegisterPortal(AAPortal* _portalToRegister)
 {
+
 }
 
 void UACPortalManager::UnregisterPortal(AAPortal* _portalToRemove)
 {
 }
 
-void UACPortalManager::DestroyPortail(TArray<AAPortal*> _portalArray)
+void UACPortalManager::DestroyPortail(AAPortal* _portalBlue, AAPortal* _portalOrange)
 {
 }
 

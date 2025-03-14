@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
+#include "APortal.h"
 #include "ACPortalManager.generated.h"
 
-class AAPortal;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PB2_PORTAL_API UACPortalManager : public UActorComponent
@@ -17,7 +16,8 @@ class PB2_PORTAL_API UACPortalManager : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UACPortalManager();
-	AAPortal* portal;
+	AAPortal* portalOrange;
+	AAPortal* portalBlue;
 
 protected:
 	// Called when the game starts
@@ -35,5 +35,5 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void UnregisterPortal(AAPortal* _portalToRemove);
 	UFUNCTION(BlueprintCallable)
-	void DestroyPortail(TArray<AAPortal*> _portalArray);
+	void DestroyPortail(AAPortal* _portalBlue = nullptr, AAPortal* _portalOrange = nullptr);
 };

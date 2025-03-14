@@ -57,4 +57,5 @@ protected:
 private:
 	/** The Character holding this weapon*/
 	APB2_PortalCharacter* Character;
+
 };

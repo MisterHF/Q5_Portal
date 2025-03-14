@@ -11,22 +11,27 @@ AAPortal::AAPortal()
 
 }
 
-void AAPortal::CreatePortal(FVector _pos, TSubclassOf<AAPortal> _portalType)
-{
-	if (IsValid(_portalType)) {
-		
-		AAPortal* newPortal = GetWorld()->SpawnActor<AAPortal>(_portalType);
-		newPortal->SetActorLocation(_pos);
-		// appeler une fonction pour set le type du portail
-	}
-}
-
-void AAPortal::DestroyPortal()
-{
-}
+//AAPortal* AAPortal::CreatePortal(FVector _pos, TSubclassOf<AAPortal> _portalType)
+//{
+//	if (IsValid(_portalType)) {
+//		
+//		AAPortal* newPortal = GetWorld()->SpawnActor<AAPortal>(_portalType);
+//		newPortal->SetActorLocation(_pos);
+//		// appeler une fonction pour set le type du portail
+//
+//		return newPortal;
+//	}
+//
+//	return nullptr;
+//}
 
 void AAPortal::TeleportActor(AActor* _actor, AAPortal* _portal)
 {
+	if (!IsValid(_actor) && !IsValid(_portal)) {
+		return;
+	}
+
+	_actor->SetActorLocation(_portal->GetActorLocation());
 }
 
 //// Called when the game starts or when spawned

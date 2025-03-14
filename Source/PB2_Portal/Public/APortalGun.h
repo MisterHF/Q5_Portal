@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "APortal.h"
 #include "APortalGun.generated.h"
+
 
 UCLASS()
 class PB2_PORTAL_API AAPortalGun : public AActor
@@ -22,6 +24,10 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	FVector CreateLineTrace(APlayerController* _playerController, FVector _startPosLineTrace, AActor* _actor, TSubclassOf<AAPortal> _portalType);
 
 
 
