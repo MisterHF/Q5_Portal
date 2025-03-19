@@ -25,7 +25,7 @@ void AAPortalGun::Tick(float DeltaTime)
 
 }
 
-FVector AAPortalGun::CreateLineTrace(APlayerController* _playerController, FVector _startPosLineTrace, AActor* _actor, TSubclassOf<AAPortal> _portalType)
+FVector AAPortalGun::CreateLineTrace(APlayerController* _playerController, FVector _startPosLineTrace, AActor* _self, AActor* _portalType)
 {
 	
 	if (_playerController == nullptr && _portalType == nullptr) return FVector::Zero();
@@ -41,7 +41,7 @@ FVector AAPortalGun::CreateLineTrace(APlayerController* _playerController, FVect
 	
 	FVector End = _startPosLineTrace + CameraRotation.Vector() * 1000.f;										// Combine both to have the full LineTrace
 	FCollisionQueryParams CollisionParams;																		// define the collision
-	CollisionParams.AddIgnoredActor(_actor);
+	CollisionParams.AddIgnoredActor(_self);
 
 	GetWorld()->LineTraceSingleByChannel(Hit, _startPosLineTrace, End, ECC_Visibility, CollisionParams);
 																												// To vizualize the LineTrace in-game, lets also draw a DebugLine:
@@ -51,14 +51,18 @@ FVector AAPortalGun::CreateLineTrace(APlayerController* _playerController, FVect
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Hit Actor: %s"), *Hit.GetActor()->GetName()));
 		
-		AAPortal* newPortal = GetWorld()->SpawnActor<AAPortal>(_portalType);
-		if (IsValid(newPortal)) {
+
+		_portalType->SetActorLocation(Hit.ImpactPoint);
+		return FVector(Hit.ImpactPoint);
+
+		//AAPortal* newPortal = GetWorld()->SpawnActor<AAPortal>(_portalType);
+		/*if (IsValid(newPortal)) {
 			newPortal->SetActorLocation(FVector(Hit.ImpactPoint));
 			return FVector(Hit.GetActor()->GetActorLocation());
 		}
 		else {
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("New portal cannot be NULL: ")));
-		}
+		}*/
 	}
 	return FVector::Zero();
 	

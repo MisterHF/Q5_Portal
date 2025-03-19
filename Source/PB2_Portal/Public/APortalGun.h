@@ -27,8 +27,5 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	FVector CreateLineTrace(APlayerController* _playerController, FVector _startPosLineTrace, AActor* _actor, TSubclassOf<AAPortal> _portalType);
-
-
-
+	FVector CreateLineTrace(APlayerController* _playerController, FVector _startPosLineTrace, AActor* _self, AActor* _portalType);
 };
