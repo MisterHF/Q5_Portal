@@ -2,6 +2,8 @@
 
 #include "APortalGun.h"
 #include "Camera/CameraComponent.h"
+#include <Kismet/KismetMathLibrary.h>
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AAPortalGun::AAPortalGun()
@@ -24,47 +26,67 @@ void AAPortalGun::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
 FVector AAPortalGun::CreateLineTrace(APlayerController* _playerController, FVector _startPosLineTrace, AActor* _self, AActor* _portalType)
 {
-	
-	if (_playerController == nullptr && _portalType == nullptr) return FVector::Zero();
+    if (_playerController == nullptr || _portalType == nullptr)
+        return FVector::Zero();
 
-	FRotator CameraRotation;
-	FVector CameraLocation;
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Hit Position: %s"), *_startPosLineTrace.ToString()));
 
-	_playerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
-	
-	
-	FHitResult Hit;																								// Getting the Forward Vector, where the Actor is currently facing
-																												// Get the Actors Location which will be our Starting point for the Trace
-	
-	FVector End = _startPosLineTrace + CameraRotation.Vector() * 1000.f;										// Combine both to have the full LineTrace
-	FCollisionQueryParams CollisionParams;																		// define the collision
-	CollisionParams.AddIgnoredActor(_self);
+    FRotator CameraRotation;
+    FVector CameraLocation;
+    _playerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
 
-	GetWorld()->LineTraceSingleByChannel(Hit, _startPosLineTrace, End, ECC_Visibility, CollisionParams);
-																												// To vizualize the LineTrace in-game, lets also draw a DebugLine:
-	DrawDebugLine(GetWorld(), _startPosLineTrace, End, Hit.bBlockingHit ? FColor::Blue : FColor::Red, false, 5.0f, 1.0f, 10.0f);
-	
-	if (Hit.bBlockingHit && IsValid(Hit.GetActor()))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Hit Actor: %s"), *Hit.GetActor()->GetName()));
-		
+    FHitResult Hit;
+    FVector End = _startPosLineTrace + CameraRotation.Vector() * 2000.f;
 
-		_portalType->SetActorLocation(Hit.ImpactPoint);
-		return FVector(Hit.ImpactPoint);
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(_self);
 
-		//AAPortal* newPortal = GetWorld()->SpawnActor<AAPortal>(_portalType);
-		/*if (IsValid(newPortal)) {
-			newPortal->SetActorLocation(FVector(Hit.ImpactPoint));
-			return FVector(Hit.GetActor()->GetActorLocation());
-		}
-		else {
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("New portal cannot be NULL: ")));
-		}*/
-	}
-	return FVector::Zero();
-	
+    GetWorld()->LineTraceSingleByChannel(Hit, _startPosLineTrace, End, ECC_Visibility, CollisionParams);
+
+    DrawDebugLine(GetWorld(), _startPosLineTrace, End, Hit.bBlockingHit ? FColor::Blue : FColor::Red, false, 5.0f, 1.0f, 10.0f);
+
+    if (Hit.bBlockingHit && IsValid(Hit.GetActor()))
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Hit Actor: %s"), *Hit.GetActor()->GetName()));
+
+        FVector ImpactNormal = Hit.ImpactNormal;
+        FVector PlayerPosition = CameraLocation;
+        FVector LookDirection = PlayerPosition - ImpactNormal;
+        FVector ProjectedForward;
+        FQuat PortalRotation;
+        FVector wallPos; 
+        LookDirection.Z = 0; 
+
+        FVector DirectionToPlayer = (CameraLocation - Hit.ImpactPoint).GetSafeNormal();
+
+
+        /*if (Hit.GetActor() && Hit.GetActor()->ActorHasTag(TEXT("Wall")))
+        {
+            ProjectedForward = FVector::VectorPlaneProject(DirectionToPlayer, ImpactNormal).GetSafeNormal();
+            PortalRotation = FRotationMatrix::MakeFromXY(ImpactNormal, ProjectedForward).ToQuat();
+            wallPos = ImpactNormal * 70;
+        }
+        else
+        {
+        }*/
+            ProjectedForward = FVector::VectorPlaneProject(DirectionToPlayer, ImpactNormal).GetSafeNormal();
+            PortalRotation = FRotationMatrix::MakeFromXZ(ProjectedForward, ImpactNormal).ToQuat();
+        _portalType->SetActorLocation(Hit.ImpactPoint + wallPos);
+
+        GEngine->AddOnScreenDebugMessage(
+            -1,
+            15.0f,
+            FColor::Yellow,
+            FString::Printf(TEXT("Portal rotation: %s"), *PortalRotation.Vector().ToString())
+        );
+        _portalType->SetActorRotation(PortalRotation);
+        return Hit.ImpactPoint;
+    }
+
+    return FVector::Zero();
 }
+
+
 
